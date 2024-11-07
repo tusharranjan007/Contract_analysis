@@ -10,9 +10,9 @@ import ContractAnalysisSchema, {
   import { isValidMongoId } from "../utils/mongoUtils";
 
 
-const upload = multer({
+  const upload = multer({
     storage: multer.memoryStorage(),
-    fileFilter: (req, file, cb) => {
+    fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
         if (file.mimetype === "application/pdf") {
           cb(null, true);
         } else {
@@ -21,7 +21,6 @@ const upload = multer({
         }
       },
 }).single("contract");
-
 export const uploadMiddleware = upload;
 
 
