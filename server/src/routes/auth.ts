@@ -17,7 +17,6 @@ router.get(
 );
 
 router.get("/current-user", (req, res) => {
-  console.log("Session data:", req.session); // Log session data
   if (req.isAuthenticated()) {
     res.json(req.user);
   } else {
@@ -33,6 +32,5 @@ router.get("/logout", (req, res, next) => {
     res.status(200).json({ status: "ok" });
   });
 });
-
 
 export default router;
