@@ -21,7 +21,7 @@ passport.use(
               profilePicture: profile.photos![0].value,
             });
           }
-  
+          console.log("Authenticated user:", user);
           done(null, user);
         } catch (error) {
           done(error as Error, undefined);
