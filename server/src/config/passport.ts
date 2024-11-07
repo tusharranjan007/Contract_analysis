@@ -1,5 +1,5 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GoogleStrategy, Profile } from "passport-google-oauth20";
 import User, { IUser } from "../models/user.model";
 
 passport.use(
@@ -9,7 +9,12 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (
+      accessToken: string,
+      refreshToken: string,
+      profile: Profile,
+      done: (error: any, user?: IUser | false) => void
+    ) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
 
@@ -34,7 +39,11 @@ passport.serializeUser((user: any, done) => {
   done(null, user._id);
 });
 
-passport.deserializeUser(async (id: string, done) => {
-  const user = await User.findById(id);
-  done(null, user);
+passport.deserializeUser(async (id: string, done: (error: any, user?: IUser | null) => void) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
 });
