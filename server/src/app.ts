@@ -51,8 +51,8 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI! }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: false, // Set to `false` temporarily for testing
+      sameSite: "lax", // Set to "lax" temporarily; switch to "none" when ready
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
