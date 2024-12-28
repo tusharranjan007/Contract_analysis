@@ -19,19 +19,28 @@ import { handleWebhook } from "./controllers/payment.controller";
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 mongoose
   .connect(process.env.MONGODB_URI!)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error(err));
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL,
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    })
+  );
 
-app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: "cross-origin" },
+      crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+    })
+  );
 app.use(morgan("dev"));
 
 app.post(
@@ -49,12 +58,15 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI! }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: true,
+      sameSite: 'none',
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     },
+    proxy: true
   })
 );
+
 
 app.use(passport.initialize());
 app.use(passport.session());
