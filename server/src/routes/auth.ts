@@ -10,10 +10,10 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
-  }
+  passport.authenticate("google", { 
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=auth_failed`,
+    successRedirect: `${process.env.CLIENT_URL}/dashboard`
+  })
 );
 
 router.get("/current-user", (req, res) => {
